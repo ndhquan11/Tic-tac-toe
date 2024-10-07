@@ -2,7 +2,7 @@
   "name": "react.dev",
   "version": "0.0.0",
   "main": "/src/index.js",
-  "homepage": "https://<username>.github.io/<repository-name>",
+  "homepage": "https://quynluvpinky.github.io/tic-tac-toe",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
