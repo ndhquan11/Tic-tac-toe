@@ -29,7 +29,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
     } else {
       nextSquares[i] = 'O';
     }
-    onPlay(nextSquares);
+    onPlay(nextSquares, i);
   }
 
   const winner = calculateWinner(squares);
@@ -65,15 +65,15 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState([{ squares: Array(9).fill(null), location: null }]);
   const [currentMove, setCurrentMove] = useState(0);
   const [isAscending, setIsAscending] = useState(true);
   const [winningSquares, setWinningSquares] = useState([]);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove].squares;
 
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  function handlePlay(nextSquares, location) {
+    const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, location }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
 
@@ -87,7 +87,7 @@ export default function Game() {
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
-    const winner = calculateWinner(history[nextMove]);
+    const winner = calculateWinner(history[nextMove].squares);
     if (winner) {
       setWinningSquares(winner.line);
     } else {
@@ -99,17 +99,18 @@ export default function Game() {
     setIsAscending(!isAscending);
   }
 
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
+  function getLocation(index) {
+    const row = Math.floor(index / 3) + 1;
+    const col = (index % 3) + 1;
+    return `(${row}, ${col})`;
+  }
+
+  const moves = history.map((step, move) => {
+    const description = move > 0 ? `Go to move #${move} ${step.location !== null ? getLocation(step.location) : ''}` : 'Go to game start';
     return (
       <li key={move}>
         {move === currentMove ? (
-          <span>You are at move #{move}</span>
+          <span>You are at move #{move} {step.location !== null ? getLocation(step.location) : ''}</span>
         ) : (
           <button onClick={() => jumpTo(move)}>{description}</button>
         )}
