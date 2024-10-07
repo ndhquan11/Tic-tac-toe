@@ -9,6 +9,10 @@ function Square({ value, onSquareClick }) {
 }
 
 function Board({ xIsNext, squares, onPlay }) {
+  function renderSquare(i) {
+    return <Square value={squares[i]} onSquareClick={() => handleClick(i)} />;
+  }
+
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -31,29 +35,31 @@ function Board({ xIsNext, squares, onPlay }) {
   }
 
   return (
-    <>
+    <div>
       <div className="status">{status}</div>
-      {Array(3).fill(null).map((_, row) => (
-        <div className="board-row" key={row}>
-          {Array(3).fill(null).map((_, col) => {
-            const index = row * 3 + col;
-            return (
-              <Square
-                key={index}
-                value={squares[index]}
-                onSquareClick={() => handleClick(index)}
-              />
-            );
-          })}
-        </div>
-      ))}
-    </>
+      <div className="board-row">
+        {renderSquare(0)}
+        {renderSquare(1)}
+        {renderSquare(2)}
+      </div>
+      <div className="board-row">
+        {renderSquare(3)}
+        {renderSquare(4)}
+        {renderSquare(5)}
+      </div>
+      <div className="board-row">
+        {renderSquare(6)}
+        {renderSquare(7)}
+        {renderSquare(8)}
+      </div>
+    </div>
   );
 }
 
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
+  const [isAscending, setIsAscending] = useState(true);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
@@ -65,6 +71,10 @@ export default function Game() {
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
+  }
+
+  function toggleSortOrder() {
+    setIsAscending(!isAscending);
   }
 
   const moves = history.map((squares, move) => {
@@ -85,13 +95,18 @@ export default function Game() {
     );
   });
 
+  const sortedMoves = isAscending ? moves : moves.slice().reverse();
+
   return (
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <button onClick={toggleSortOrder}>
+          {isAscending ? 'Sort Descending' : 'Sort Ascending'}
+        </button>
+        <ol>{sortedMoves}</ol>
       </div>
     </div>
   );
