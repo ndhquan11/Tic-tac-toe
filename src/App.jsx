@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
 function Square({ value, onSquareClick, isWinningSquare }) {
   return (
@@ -64,7 +67,28 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
   );
 }
 
-export default function Game() {
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return { player: squares[a], line: [a, b, c] };
+    }
+  }
+  return null;
+}
+
+function App() {
+
   const [history, setHistory] = useState([{ squares: Array(9).fill(null), location: null }]);
   const [currentMove, setCurrentMove] = useState(0);
   const [isAscending, setIsAscending] = useState(true);
@@ -135,22 +159,4 @@ export default function Game() {
   );
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return { player: squares[a], line: [a, b, c] };
-    }
-  }
-  return null;
-}
+export default App
